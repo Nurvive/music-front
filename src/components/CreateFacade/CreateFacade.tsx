@@ -3,8 +3,9 @@ import { CreatingSteps } from '~/components/CreateSteps/CreateSteps.types';
 import { CreateForm } from '~/components/CreateForm';
 import { FileUpload } from '~/components/FileUpload';
 import { Button } from '@mui/material';
+import { CreateFacadeProps } from './CreateFacade.types';
 
-export const CreateFacade = ({ currentStep, setFile }: { currentStep: CreatingSteps, setFile: (file: File | null) => void }) => {
+export const CreateFacade = ({ currentStep, setFile }: CreateFacadeProps) => {
     switch (currentStep) {
         case CreatingSteps.INFO:
             return <CreateForm />;

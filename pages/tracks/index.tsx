@@ -1,39 +1,40 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { MainLayout } from '~/layouts/MainLayout';
-import { Box, Card, Grid } from '@mui/material';
+import { Card, CardContent, CardHeader, Grid } from '@mui/material';
 import Link from 'next/link';
+import { useAppDispatch, useAppSelector } from '~/hooks';
+import { getList } from '~/api';
+import { NextPage } from 'next';
 import { Track } from '~/types';
-import { TrackList } from '~/components/TrackList';
+import { setTracks } from '~/store/track';
+import { LINK_CREATE } from '~/constants';
+import { TrackItem } from '~/components/TrackItem';
+import List from '@mui/material/List';
 
-export const Tracks = () => {
-    const tracks: Track[] = [{
-        _id: '1',
-        name: 'name',
-        artist: 'artist',
-        text: 'texttext text',
-        listens: 2,
-        picture: '',
-        audio: ''
-    },{
-        _id: '2',
-        name: '2name2',
-        artist: 'XxartistxX',
-        text: 'texttext texttext vtexttext text',
-        listens: 10,
-        picture: '',
-        audio: ''
-    }];
+interface TracksPage {
+    initialTracks: Track[];
+}
+
+const Tracks: NextPage<TracksPage> = ({ initialTracks = [] }) => {
+    const { tracks } = useAppSelector((state) => state.tracks);
+    const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        dispatch(setTracks(initialTracks));
+    }, [dispatch, initialTracks]);
+
     return (
         <MainLayout>
             <Grid container justifyContent="center">
-                <Card>
-                    <Box p={3}>
-                        <Grid container justifyContent="space-between">
-                            <h1>Список треков</h1>
-                            <Link href='/create'>Загрузить</Link>
-                        </Grid>
-                    </Box>
-                    <TrackList tracks={tracks} />
+                <Card sx={{ width: '100%' }}>
+                    <CardHeader subheader={<Link href={LINK_CREATE}>Загрузить</Link>} title="Список треков" />
+                    <CardContent>
+                        <List>
+                            {tracks.map((track) => (
+                                <TrackItem track={track} key={track._id} />
+                            ))}
+                        </List>
+                    </CardContent>
                 </Card>
             </Grid>
         </MainLayout>
@@ -41,3 +42,18 @@ export const Tracks = () => {
 };
 
 export default Tracks;
+
+export const getServerSideProps = async () => {
+    try {
+        const tracks = await getList();
+
+        return {
+            props: { initialTracks: tracks },
+        };
+    } catch (e) {
+        console.error(e);
+        return {
+            props: { initialTracks: [] },
+        };
+    }
+};

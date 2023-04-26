@@ -4,6 +4,7 @@ import Button from '@mui/material/Button';
 import { useState } from 'react';
 import { DRAWER_ANCHOR } from '~/components/Navbar/Navbar.constants';
 import { NavbarList } from '~/components/Navbar/NavbarList';
+import { Box } from '@mui/system';
 
 export const Navbar = () => {
     const [drawerIsOpen, setDrawerIsOpen] = useState(false);
@@ -23,13 +24,13 @@ export const Navbar = () => {
     );
 
     return (
-        <div>
-            <>
-                <Button onClick={toggleDrawer(true)}>{DRAWER_ANCHOR}</Button>
-                <Drawer anchor={DRAWER_ANCHOR} open={drawerIsOpen} onClose={toggleDrawer(false)}>
-                    <NavbarList toggleDrawer={toggleDrawer} />
-                </Drawer>
-            </>
-        </div>
+        <Box sx={{ padding: 2 }}>
+            <Button variant="contained" onClick={toggleDrawer(true)}>
+                Меню
+            </Button>
+            <Drawer anchor={DRAWER_ANCHOR} open={drawerIsOpen} onClose={toggleDrawer(false)}>
+                <NavbarList toggleDrawer={toggleDrawer} />
+            </Drawer>
+        </Box>
     );
 };
