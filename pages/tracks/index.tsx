@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
-import { MainLayout } from '~/layouts/MainLayout';
-import { Card, CardContent, CardHeader, Grid } from '@mui/material';
+import { Button, Card, CardContent, CardHeader, Fab, Grid } from '@mui/material';
 import Link from 'next/link';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 import { getList } from '~/api';
@@ -10,12 +9,15 @@ import { setTracks } from '~/store/track';
 import { LINK_CREATE } from '~/constants';
 import { TrackItem } from '~/components/TrackItem';
 import List from '@mui/material/List';
+import { Add } from '@mui/icons-material';
 
 interface TracksPage {
     initialTracks: Track[];
 }
 
-const Tracks: NextPage<TracksPage> = ({ initialTracks = [] }) => {
+const DEFAULT_TRACKS: Track[] = [];
+
+const Tracks: NextPage<TracksPage> = ({ initialTracks = DEFAULT_TRACKS }) => {
     const { tracks } = useAppSelector((state) => state.tracks);
     const dispatch = useAppDispatch();
 
@@ -24,20 +26,27 @@ const Tracks: NextPage<TracksPage> = ({ initialTracks = [] }) => {
     }, [dispatch, initialTracks]);
 
     return (
-        <MainLayout>
-            <Grid container justifyContent="center">
-                <Card sx={{ width: '100%' }}>
-                    <CardHeader subheader={<Link href={LINK_CREATE}>Загрузить</Link>} title="Список треков" />
-                    <CardContent>
-                        <List>
-                            {tracks.map((track) => (
-                                <TrackItem track={track} key={track._id} />
-                            ))}
-                        </List>
-                    </CardContent>
-                </Card>
-            </Grid>
-        </MainLayout>
+        <Grid sx={{ minHeight: '95%' }} container justifyContent="center">
+            <Card sx={{ width: '100%' }}>
+                <CardHeader
+                    action={
+                        <Link style={{ color: 'inherit' }} href={LINK_CREATE}>
+                            <Fab size="small" color="primary" aria-label="add">
+                                <Add />
+                            </Fab>
+                        </Link>
+                    }
+                    title="Список треков"
+                />
+                <CardContent>
+                    <List>
+                        {tracks.map((track) => (
+                            <TrackItem track={track} key={track._id} />
+                        ))}
+                    </List>
+                </CardContent>
+            </Card>
+        </Grid>
     );
 };
 
@@ -51,7 +60,6 @@ export const getServerSideProps = async () => {
             props: { initialTracks: tracks },
         };
     } catch (e) {
-        console.error(e);
         return {
             props: { initialTracks: [] },
         };

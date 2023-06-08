@@ -27,7 +27,7 @@ export const RegisterForm = ({ onChangePage }: RegisterFormProps) => {
     );
 
     return (
-        <Card>
+        <Card sx={{ minWidth: '300px' }}>
             <CardHeader title="Регистрация" />
             <CardContent>
                 <Form<UserAuth>

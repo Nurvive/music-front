@@ -1,56 +1,50 @@
-import React, { ChangeEvent, memo, useCallback, useEffect, useRef } from 'react';
+import React, { ChangeEvent, useCallback, useEffect, useRef } from 'react';
 import { IconButton } from '@mui/material';
 import { Pause, PlayArrow, VolumeUp } from '@mui/icons-material';
 import { TrackProgress } from '~/components/TrackProgress';
 import { useAppDispatch, useAppSelector } from '~/hooks';
 import { setCurrentTime, setDuration, setPause, setPlay, setVolume } from '~/store/player';
 import styles from './Player.module.scss';
-import { API_URL } from '~/constants';
+import { API_URL, LINK_AUTH } from '~/constants';
+import { useRouter } from 'next/router';
 
-export const Player = memo(() => {
-    const { pause, volume, duration, active, currentTime } = useAppSelector((state) => state.player);
+export const Player = () => {
     const dispatch = useAppDispatch();
     const audio = useRef<HTMLAudioElement>();
+    const { pathname } = useRouter();
+
+    const { pause, volume, duration, active, currentTime } = useAppSelector((state) => state.player);
+
+    const handleLoadedMetaData = useCallback(() => {
+        if (audio.current) {
+            dispatch(setDuration(Math.ceil(audio.current.duration)));
+        }
+    }, [dispatch]);
+
+    const handleTimeUpdate = useCallback(() => {
+        if (audio.current) {
+            dispatch(setDuration(Math.ceil(audio.current.duration)));
+            dispatch(setCurrentTime(Math.ceil(audio.current.currentTime)));
+        }
+    }, [dispatch]);
 
     const handleInitAudio = useCallback(() => {
         if (active && audio.current) {
             audio.current.src = `${API_URL}/${active.audio}`;
             audio.current.volume = volume / 100;
-            audio.current.onloadedmetadata = () => {
-                if (audio.current) {
-                    dispatch(setDuration(Math.ceil(audio.current.duration)));
-                }
-            };
-            audio.current.ontimeupdate = () => {
-                if (audio.current) {
-                    dispatch(setCurrentTime(Math.ceil(audio.current.currentTime)));
-                }
-            };
-            if (!pause) {
-                dispatch(setPlay());
-                void audio.current.play();
-            }
+            audio.current.onloadedmetadata = handleLoadedMetaData;
+            audio.current.ontimeupdate = handleTimeUpdate;
         }
-    }, [active, dispatch, pause]); // Без зависимостей volume
+    }, [active, dispatch, handleLoadedMetaData, handleTimeUpdate]); // Без зависимостей volume
 
     const handlePlayTrack = useCallback(() => {
         if (!active || !audio.current) return;
         if (pause) {
             dispatch(setPlay());
-            void audio.current.play();
         } else {
             dispatch(setPause());
-            audio.current.pause();
         }
     }, [active, dispatch, pause]);
-
-    useEffect(() => {
-        if (!audio.current) {
-            audio.current = new Audio();
-        } else {
-            handleInitAudio();
-        }
-    }, [handleInitAudio]);
 
     const handleVolumeChange = useCallback(
         (e: ChangeEvent<HTMLInputElement>) => {
@@ -72,7 +66,24 @@ export const Player = memo(() => {
         [dispatch],
     );
 
-    return (
+    useEffect(() => {
+        if (!audio.current) {
+            audio.current = new Audio();
+        } else {
+            handleInitAudio();
+        }
+    }, [handleInitAudio]);
+
+    useEffect(() => {
+        if (!active || !audio.current) return;
+        if (pause) {
+            audio.current.pause();
+        } else {
+            void audio.current.play();
+        }
+    }, [active, pause]);
+
+    return pathname === LINK_AUTH ? null : (
         <div className={styles.player}>
             <div className={styles.player__inner}>
                 <IconButton onClick={handlePlayTrack}>{!pause ? <Pause /> : <PlayArrow />}</IconButton>
@@ -93,6 +104,4 @@ export const Player = memo(() => {
             </div>
         </div>
     );
-});
-
-Player.displayName = 'Player';
+};

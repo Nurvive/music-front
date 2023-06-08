@@ -1,11 +1,10 @@
-import React, { ChangeEvent, useCallback, useRef, useState } from 'react';
+import React, { ChangeEvent, useCallback, useRef } from 'react';
 import { FileUploadProps } from './FileUpload.types';
 import styles from './FileUpload.module.scss';
 import { Typography } from '@mui/material';
 
-export const FileUpload = ({ setFile, accept, children }: FileUploadProps) => {
+export const FileUpload = ({ setFile, accept, children, fileName }: FileUploadProps) => {
     const input = useRef<HTMLInputElement>(null);
-    const [fileName, setFileName] = useState('');
 
     const handleUploadClick = useCallback(() => {
         if (input.current) {
@@ -17,7 +16,6 @@ export const FileUpload = ({ setFile, accept, children }: FileUploadProps) => {
         (e: ChangeEvent<HTMLInputElement>) => {
             if (e.target.files) {
                 setFile?.(e.target.files[0]);
-                setFileName(e.target.files[0]?.name)
             }
         },
         [setFile],

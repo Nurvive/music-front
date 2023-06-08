@@ -5,19 +5,19 @@ import { FileUpload } from '~/components/FileUpload';
 import { Button } from '@mui/material';
 import { CreateFacadeProps } from './CreateFacade.types';
 
-export const CreateFacade = ({ currentStep, setFile }: CreateFacadeProps) => {
+export const CreateFacade = ({ currentStep, setFile, fileName }: CreateFacadeProps) => {
     switch (currentStep) {
         case CreatingSteps.INFO:
             return <CreateForm />;
         case CreatingSteps.COVER:
             return (
-                <FileUpload setFile={setFile} accept="image/*">
+                <FileUpload fileName={fileName} setFile={setFile} accept="image/*">
                     <Button>Загрузить обложку</Button>
                 </FileUpload>
             );
         case CreatingSteps.TRACK:
             return (
-                <FileUpload setFile={setFile} accept="audio/*">
+                <FileUpload fileName={fileName} setFile={setFile} accept="audio/*">
                     <Button>Загрузить трек</Button>
                 </FileUpload>
             );

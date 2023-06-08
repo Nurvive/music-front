@@ -1,5 +1,4 @@
 import React from 'react';
-import { MainLayout } from '~/layouts/MainLayout';
 import Link from 'next/link';
 import { Grid } from '@mui/material';
 import Image from 'next/image';
@@ -15,7 +14,7 @@ export const TrackPage = () => {
         audio: '',
     };
     return (
-        <MainLayout>
+        <>
             <Link href={'/tracks'}></Link>
             <Grid container>
                 <Image src={track.picture} alt={'track picture'} width={200} height={200}/>
@@ -26,7 +25,7 @@ export const TrackPage = () => {
                 </div>
                 <p>{track.text}</p>
             </Grid>
-        </MainLayout>
+        </>
     );
 };
 

@@ -1,4 +1,4 @@
-import { User, UserAuth } from '~/types';
+import { GetUserInfoResponse, User, UserAuth } from '~/types';
 import { axiosInstance } from '~/api/axios';
 
 const path = '/auth';
@@ -14,3 +14,9 @@ export const signIn = async (value: UserAuth): Promise<User> => {
 
     return data.data;
 }
+
+export const authenticate = async (): Promise<User> => {
+    const data = await axiosInstance.get<GetUserInfoResponse>(path);
+
+    return data.data;
+};

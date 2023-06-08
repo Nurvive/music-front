@@ -1,12 +1,7 @@
 import React from 'react';
-import { MainLayout } from '~/layouts/MainLayout';
+import { NextPage } from 'next';
+import { MainPage } from '~/pages/MainPage';
 
-export const Index = () => {
-    return (
-        <MainLayout>
-            <div>Hello</div>
-        </MainLayout>
-    );
-};
+export const Index: NextPage = () => <MainPage />;
 
 export default Index;

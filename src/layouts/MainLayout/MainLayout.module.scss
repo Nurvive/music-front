@@ -4,5 +4,5 @@
     flex-direction: column;
     gap: 10px;
     width: 100%;
-    height: calc(100% - 80px);
+    height: calc(100% - var(--playerHeight));
 }

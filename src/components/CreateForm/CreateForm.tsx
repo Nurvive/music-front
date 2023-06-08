@@ -1,14 +1,13 @@
 import React, { useEffect } from 'react';
-import { Grid, TextField } from '@mui/material';
+import { Grid, TextField, Typography } from '@mui/material';
 import { useAppDispatch, useAppSelector, useInput } from '~/hooks';
 import { setCreateTrackPayload } from '~/store/createTrack';
 
 export const CreateForm = () => {
-    const { name: nameInitial, text: textInitial, artist: artistInitial } = useAppSelector((state) => state.createTrack);
+    const { name: nameInitial, artist: artistInitial } = useAppSelector((state) => state.createTrack);
 
     const name = useInput(nameInitial);
     const artist = useInput(artistInitial);
-    const text = useInput(textInitial);
 
     const dispatch = useAppDispatch();
 
@@ -17,16 +16,15 @@ export const CreateForm = () => {
             setCreateTrackPayload({
                 name: name.value,
                 artist: artist.value,
-                text: text.value,
             }),
         );
-    }, [artist.value, dispatch, name.value, text.value]);
+    }, [artist.value, dispatch, name.value]);
 
     return (
         <Grid gap={1.5} container direction="column">
+            <Typography variant="h5" gutterBottom>Основная информация</Typography>
             <TextField {...name} label="Название трека" />
-            <TextField {...artist} label="Имя исплнителя" />
-            <TextField {...text} multiline rows={3} label="Текст трека" />
+            <TextField {...artist} label="Имя исполнителя" />
         </Grid>
     );
 };

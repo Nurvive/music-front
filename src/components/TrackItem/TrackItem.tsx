@@ -1,18 +1,24 @@
 import React, { useCallback, MouseEvent } from 'react';
-import { Track } from '~/types';
 import { Grid, IconButton } from '@mui/material';
 import { Pause, PlayArrow } from '@mui/icons-material';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { setActiveTrack, setPlay } from '~/store/player';
-import { useAppDispatch } from '~/hooks';
+import { setActiveTrack, setPause, setPlay } from '~/store/player';
+import { useAppDispatch, useAppSelector } from '~/hooks';
 import { API_URL } from '~/constants';
 import ListItem from '@mui/material/ListItem';
 import { TrackName } from '~/components/TrackName';
+import { TrackItemProps } from '~/components/TrackItem/TrackItem.types';
+import { secondsToMinutes } from '~/utils/secondsToMinutes';
+import { AddToPlaylist } from '~/components/AddToPlaylist';
 
-export const TrackItem = ({ track, isActive = false }: { track: Track; isActive?: boolean }) => {
+export const TrackItem = ({ track }: TrackItemProps) => {
     const { push } = useRouter();
     const dispatch = useAppDispatch();
+
+    const { pause, active, currentTime, duration } = useAppSelector((state) => state.player);
+
+    const isActive = track._id === active?._id && !pause;
 
     const handleTrackClick = useCallback(() => {
         void push(`tracks/${track._id}`);
@@ -21,10 +27,17 @@ export const TrackItem = ({ track, isActive = false }: { track: Track; isActive?
     const handlePlayClick = useCallback(
         (e: MouseEvent) => {
             e.stopPropagation();
-            dispatch(setActiveTrack(track));
-            dispatch(setPlay());
+
+            if (isActive) {
+                dispatch(setPause());
+            } else {
+                if (track._id !== active?._id) {
+                    dispatch(setActiveTrack(track));
+                }
+                dispatch(setPlay());
+            }
         },
-        [dispatch, track],
+        [dispatch, isActive, track, active?._id],
     );
 
     return (
@@ -33,8 +46,12 @@ export const TrackItem = ({ track, isActive = false }: { track: Track; isActive?
             <Image src={`${API_URL}/${track.picture}`} quality={100} alt="track picture" width={60} height={60} />
             <Grid container>
                 <TrackName onClick={handleTrackClick} name={track.name} artist={track.artist} />
+                <AddToPlaylist trackId={track._id} />
             </Grid>
-            {isActive && <div>time</div>}
+            <div>
+                {isActive && `${secondsToMinutes(currentTime)}`}
+                {/*{secondsToMinutes(duration)}*/}
+            </div>
         </ListItem>
     );
 };

@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { AUTH_SLICE_NAME, registration } from '~/store/auth/auth.actions';
+import { auth, AUTH_SLICE_NAME, registration } from '~/store/auth/auth.actions';
 import { AuthState, FetchStatus } from '~/types';
 
 const initialState: AuthState = {
@@ -23,6 +23,17 @@ export const authSlice = createSlice({
                 state._id = payload._id;
             })
             .addCase(registration.rejected, (state) => {
+                state.loadingStatus = FetchStatus.REJECTED;
+            })
+            .addCase(auth.pending, (state) => {
+                state.loadingStatus = FetchStatus.PENDING;
+            })
+            .addCase(auth.fulfilled, (state, { payload }) => {
+                state.loadingStatus = FetchStatus.FULFILLED;
+                state.name = payload.name;
+                state._id = payload._id;
+            })
+            .addCase(auth.rejected, (state) => {
                 state.loadingStatus = FetchStatus.REJECTED;
             }),
 });

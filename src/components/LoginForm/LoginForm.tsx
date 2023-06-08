@@ -27,7 +27,7 @@ export const LoginForm = ({ onChangePage }: LoginFormProps) => {
     );
 
     return (
-        <Card>
+        <Card sx={{ minWidth: '300px' }}>
             <CardHeader title="Вход" />
             <CardContent>
                 <Form<UserAuth>

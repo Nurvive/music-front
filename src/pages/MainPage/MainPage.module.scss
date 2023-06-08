@@ -1,0 +1,10 @@
+.add {
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    transition: transform 0.4s ease;
+
+    &:hover {
+        transform: scale(1.1);
+    }
+}

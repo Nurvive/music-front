@@ -4,7 +4,6 @@ import { CreateTrackPayload } from '~/types';
 const initialState: CreateTrackPayload = {
     name: '',
     artist: '',
-    text: '',
 };
 
 export const createTrackSlice = createSlice({
@@ -13,7 +12,6 @@ export const createTrackSlice = createSlice({
     reducers: {
         setCreateTrackPayload(state, { payload }: PayloadAction<CreateTrackPayload>) {
             state.artist = payload.artist;
-            state.text = payload.text;
             state.name = payload.name;
         },
     },

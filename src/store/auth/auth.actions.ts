@@ -1,7 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { LoginResponse, RegistrationResponse, UserAuth } from '~/types';
-import { register, signIn } from '~/api/auth.http';
+import { LoginResponse, RegistrationResponse, User, UserAuth } from '~/types';
+import { authenticate, register, signIn } from '~/api/auth.http';
 import { AxiosError } from 'axios';
+
 export const AUTH_SLICE_NAME = 'auth';
 
 export const registration = createAsyncThunk<RegistrationResponse, UserAuth>(
@@ -25,3 +26,12 @@ export const login = createAsyncThunk<LoginResponse, UserAuth>(
         }
     },
 );
+
+export const auth = createAsyncThunk<User, void>(
+    `${AUTH_SLICE_NAME}/auth`, async (_, { rejectWithValue }) => {
+    try {
+        return await authenticate();
+    } catch (e) {
+        return rejectWithValue(JSON.stringify((e as AxiosError).response));
+    }
+});

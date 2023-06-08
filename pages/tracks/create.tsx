@@ -1,7 +1,6 @@
-import { MainLayout } from '~/layouts/MainLayout';
 import { CreateSteps } from '~/components/CreateSteps';
 import { Button, Grid } from '@mui/material';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { CreatingSteps } from '~/components/CreateSteps/CreateSteps.types';
 import { CreateFacade } from '~/components/CreateFacade';
 import { useAppDispatch, useAppSelector } from '~/hooks';
@@ -14,20 +13,21 @@ const Create = () => {
     const [currentStep, setCurrentStep] = useState(CreatingSteps.INFO);
     const [picture, setPicture] = useState<File | null>(null);
     const [audio, setAudio] = useState<File | null>(null);
+    const [fileName, setFileName] = useState('');
     const dispatch = useAppDispatch();
     const { push } = useRouter();
-    const { name, text, artist } = useAppSelector((state) => state.createTrack);
+    const { name, artist } = useAppSelector((state) => state.createTrack);
 
     const handleStepNext = () => {
         if (currentStep !== CreatingSteps.TRACK) {
             setCurrentStep((prevState) => prevState + 1);
+            setFileName('');
         } else if (picture && audio) {
             dispatch(
                 createTrack({
                     picture,
                     audio,
                     name,
-                    text,
                     artist,
                 }),
             ).then(() => push(LINK_TRACKS));
@@ -38,10 +38,26 @@ const Create = () => {
         setCurrentStep((prevState) => prevState - 1);
     }, []);
 
-    const handleFileSet = useCallback(() => {
-        if (currentStep === CreatingSteps.COVER) return setPicture;
-        if (currentStep === CreatingSteps.TRACK) return setAudio;
-    }, [currentStep]);
+    const handleFileSet = useCallback(
+        (file: File) => {
+            if (currentStep === CreatingSteps.COVER) {
+                setPicture(file);
+            }
+            if (currentStep === CreatingSteps.TRACK) {
+                setAudio(file);
+            }
+        },
+        [currentStep],
+    );
+
+    useEffect(() => {
+        if (currentStep === CreatingSteps.COVER) {
+            setFileName(picture?.name ?? '');
+        }
+        if (currentStep === CreatingSteps.TRACK) {
+            setFileName(audio?.name ?? '');
+        }
+    }, [audio?.name, currentStep, picture?.name]);
 
     const disabledNext =
         currentStep === CreatingSteps.INFO
@@ -53,21 +69,19 @@ const Create = () => {
             : false;
 
     return (
-        <MainLayout>
-            <Stack paddingY={2} height="100%" direction="column" justifyContent="space-between" alignItems="center">
-                <CreateSteps currentStep={currentStep}>
-                    <CreateFacade setFile={handleFileSet()} currentStep={currentStep} />
-                </CreateSteps>
-                <Grid container justifyContent="space-between">
-                    <Button variant="outlined" disabled={currentStep === CreatingSteps.INFO} onClick={handleStepBack}>
-                        Назад
-                    </Button>
-                    <Button variant="outlined" disabled={disabledNext} onClick={handleStepNext}>
-                        Вперед
-                    </Button>
-                </Grid>
-            </Stack>
-        </MainLayout>
+        <Stack paddingY={2} height="100%" direction="column" justifyContent="space-between" alignItems="center">
+            <CreateSteps currentStep={currentStep}>
+                <CreateFacade fileName={fileName} setFile={handleFileSet} currentStep={currentStep} />
+            </CreateSteps>
+            <Grid container justifyContent="space-between">
+                <Button variant="outlined" disabled={currentStep === CreatingSteps.INFO} onClick={handleStepBack}>
+                    Назад
+                </Button>
+                <Button variant="outlined" disabled={disabledNext} onClick={handleStepNext}>
+                    Вперед
+                </Button>
+            </Grid>
+        </Stack>
     );
 };
 
