@@ -1,3 +1,5 @@
+import { Track } from '~/types';
+
 export interface AddToPlaylistProps {
-    trackId: string;
+    track: Track;
 }

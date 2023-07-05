@@ -11,11 +11,14 @@ import ListItemText from '@mui/material/ListItemText';
 import { updatePlaylist } from '~/store/playlist';
 import { Track } from '~/types';
 
-export const AddToPlaylist = ({ trackId }: AddToPlaylistProps) => {
+export const AddToPlaylist = ({ track }: AddToPlaylistProps) => {
     const { isAuth } = useIsAuth();
     const id = useId();
-    const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
     const dispatch = useAppDispatch();
+
+    const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
+
+    const { playlists } = useAppSelector((state) => state.playlist);
 
     const handleClickAdd = useCallback((event: MouseEvent<HTMLDivElement>) => {
         setAnchorEl(event.currentTarget);
@@ -27,15 +30,13 @@ export const AddToPlaylist = ({ trackId }: AddToPlaylistProps) => {
 
     const handleClickPlaylist = useCallback(
         (playlistId: string, tracks: Track[]) => {
-            dispatch(updatePlaylist({ _id: playlistId, tracks: [trackId, ...tracks.map((track) => track._id)] }));
+            dispatch(updatePlaylist({ _id: playlistId, tracks: [track, ...tracks] }));
             handleClose()
         },
-        [dispatch, trackId, handleClose],
+        [dispatch, track, handleClose],
     );
 
     const isOpen = Boolean(anchorEl);
-
-    const { playlists } = useAppSelector((state) => state.playlist);
 
     return isAuth ? (
         <>

@@ -14,8 +14,10 @@ const Create = () => {
     const [picture, setPicture] = useState<File | null>(null);
     const [audio, setAudio] = useState<File | null>(null);
     const [fileName, setFileName] = useState('');
+
     const dispatch = useAppDispatch();
     const { push } = useRouter();
+
     const { name, artist } = useAppSelector((state) => state.createTrack);
 
     const handleStepNext = () => {
@@ -78,7 +80,7 @@ const Create = () => {
                     Назад
                 </Button>
                 <Button variant="outlined" disabled={disabledNext} onClick={handleStepNext}>
-                    Вперед
+                    {currentStep === CreatingSteps.TRACK ? 'Загрузить' : 'Вперед'}
                 </Button>
             </Grid>
         </Stack>

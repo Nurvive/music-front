@@ -9,10 +9,20 @@ import MailIcon from '@mui/icons-material/Mail';
 import ListItemText from '@mui/material/ListItemText';
 import Link from 'next/link';
 import { NavbarListProps } from '~/components/Navbar/NavbarList/NavbarList.types';
-import { useIsAuth } from '~/hooks';
+import { useAppDispatch, useIsAuth } from '~/hooks';
+import { logout } from '~/store/auth';
+import { useRouter } from 'next/router';
+import { LINK_TRACKS } from '~/constants';
+import { useCallback } from 'react';
 
 export const NavbarList = ({ toggleDrawer }: NavbarListProps) => {
     const { isAuth } = useIsAuth();
+    const dispatch = useAppDispatch();
+    const { push } = useRouter();
+
+    const handleLogoutClick = useCallback(() => {
+        dispatch(logout()).then(() => push(LINK_TRACKS));
+    }, [dispatch, push]);
 
     return (
         <Box
@@ -24,21 +34,34 @@ export const NavbarList = ({ toggleDrawer }: NavbarListProps) => {
                 sx={{
                     display: { xs: 'block', sm: 'flex' },
                 }}>
-                {(isAuth ? AUTH_LIST_ITEMS : LIST_ITEMS).map(({ name, href }, index) => (
-                    <ListItem key={name} disablePadding>
-                        <Link style={{ width: '100%' }} href={href}>
+                <>
+                    {(isAuth ? AUTH_LIST_ITEMS : LIST_ITEMS).map(({ name, href }, index) => (
+                        <ListItem key={name} disablePadding>
+                            <Link style={{ width: '100%' }} href={href}>
+                                <ListItemButton sx={{ width: '100%' }}>
+                                    <ListItemIcon
+                                        sx={{
+                                            display: { xs: 'block', sm: 'none' },
+                                        }}>
+                                        {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                                    </ListItemIcon>
+                                    <ListItemText sx={{ color: { xs: 'black', sm: '#ececec' } }} primary={name} />
+                                </ListItemButton>
+                            </Link>
+                        </ListItem>
+                    ))}
+                    {isAuth && (
+                        <ListItem onClick={handleLogoutClick} disablePadding>
                             <ListItemButton sx={{ width: '100%' }}>
                                 <ListItemIcon
                                     sx={{
                                         display: { xs: 'block', sm: 'none' },
-                                    }}>
-                                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                                </ListItemIcon>
-                                <ListItemText sx={{ color: { xs: 'black', sm: '#ececec' } }} primary={name} />
+                                    }}></ListItemIcon>
+                                <ListItemText sx={{ color: { xs: 'black', sm: '#ececec' } }} primary="Выйти" />
                             </ListItemButton>
-                        </Link>
-                    </ListItem>
-                ))}
+                        </ListItem>
+                    )}
+                </>
             </List>
         </Box>
     );

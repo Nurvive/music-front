@@ -7,7 +7,7 @@ import { Box } from '@mui/system';
 import { AppBar, IconButton, Toolbar, Typography } from '@mui/material';
 import { Menu } from '@mui/icons-material';
 import Link from 'next/link';
-import { LINK_AUTH, LINK_MAIN } from '~/constants';
+import { LINK_MAIN } from '~/constants';
 
 export const Navbar = () => {
     const [drawerIsOpen, setDrawerIsOpen] = useState(false);

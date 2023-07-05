@@ -9,8 +9,11 @@ import styles from './PlaylistItem.module.css';
 
 export const PlaylistItem = ({ playlist }: PlaylistItemProps) => {
     return (
-        <ListItem className={styles.listItem} title={playlist.name}>
-            <Paper className={styles.paper} sx={{ padding: 2 }} elevation={3}>
+        <ListItem sx={{ width: '100%', maxWidth: '220px' }} title={playlist.name}>
+            <Paper
+                className={styles.paper}
+                sx={{ padding: 2, display: 'flex', width: '100%', flexDirection: 'column', alignItems: 'center' }}
+                elevation={3}>
                 <Link className={styles.link} href={`${LINK_PLAYLIST}/${playlist._id}`}>
                     <QueueMusic sx={{ fontSize: 80, fill: `#${stringToHexCode(playlist.name)}` }} />
                     <Typography fontSize={24} color="black">

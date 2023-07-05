@@ -1,6 +1,5 @@
 import React, { ChangeEvent, useCallback, useRef } from 'react';
 import { FileUploadProps } from './FileUpload.types';
-import styles from './FileUpload.module.scss';
 import { Typography } from '@mui/material';
 
 export const FileUpload = ({ setFile, accept, children, fileName }: FileUploadProps) => {
@@ -23,7 +22,7 @@ export const FileUpload = ({ setFile, accept, children, fileName }: FileUploadPr
 
     return (
         <div onClick={handleUploadClick}>
-            <input className={styles.input} onChange={handleInputChange} ref={input} type="file" accept={accept} />
+            <input hidden onChange={handleInputChange} ref={input} type="file" accept={accept} />
             {children}
             <Typography>{fileName}</Typography>
         </div>

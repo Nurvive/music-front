@@ -1,12 +1,13 @@
 import React, { ChangeEvent, useCallback, useEffect, useRef } from 'react';
 import { IconButton } from '@mui/material';
-import { Pause, PlayArrow, VolumeUp } from '@mui/icons-material';
+import { Pause, PlayArrow, SkipNext, SkipPrevious, VolumeUp } from '@mui/icons-material';
 import { TrackProgress } from '~/components/TrackProgress';
 import { useAppDispatch, useAppSelector } from '~/hooks';
-import { setCurrentTime, setDuration, setPause, setPlay, setVolume } from '~/store/player';
+import { setActiveTrack, setCurrentTime, setDuration, setPause, setPlay, setVolume } from '~/store/player';
 import styles from './Player.module.scss';
 import { API_URL, LINK_AUTH } from '~/constants';
 import { useRouter } from 'next/router';
+import { setPrevTrack, setNextTrack } from '~/store/playQueue';
 
 export const Player = () => {
     const dispatch = useAppDispatch();
@@ -14,6 +15,7 @@ export const Player = () => {
     const { pathname } = useRouter();
 
     const { pause, volume, duration, active, currentTime } = useAppSelector((state) => state.player);
+    const { nextTrack, prevTrack } = useAppSelector((state) => state.playQueue);
 
     const handleLoadedMetaData = useCallback(() => {
         if (audio.current) {
@@ -66,6 +68,22 @@ export const Player = () => {
         [dispatch],
     );
 
+    const handleNextTrack = useCallback(() => {
+        dispatch(setNextTrack()).unwrap().then((res) => {
+            if (res.activeTrack) {
+                dispatch(setActiveTrack(res.activeTrack));
+            }
+        });
+    }, [dispatch]);
+
+    const handlePrevTrack = useCallback(() => {
+        dispatch(setPrevTrack()).unwrap().then((res) => {
+            if (res.activeTrack) {
+                dispatch(setActiveTrack(res.activeTrack));
+            }
+        });
+    }, [dispatch]);
+
     useEffect(() => {
         if (!audio.current) {
             audio.current = new Audio();
@@ -86,7 +104,13 @@ export const Player = () => {
     return pathname === LINK_AUTH ? null : (
         <div className={styles.player}>
             <div className={styles.player__inner}>
+                <IconButton onClick={prevTrack ? handlePrevTrack : undefined} sx={{ opacity: prevTrack ? '1' : '0.5' }}>
+                    <SkipPrevious />
+                </IconButton>
                 <IconButton onClick={handlePlayTrack}>{!pause ? <Pause /> : <PlayArrow />}</IconButton>
+                <IconButton onClick={nextTrack ? handleNextTrack : undefined} sx={{ opacity: nextTrack ? '1' : '0.5' }}>
+                    <SkipNext />
+                </IconButton>
                 <div>
                     <div>{active?.name}</div>
                     <div>{active?.artist}</div>

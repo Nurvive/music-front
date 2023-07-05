@@ -20,3 +20,15 @@ export const authenticate = async (): Promise<User> => {
 
     return data.data;
 };
+
+export const out = async () => {
+    await axiosInstance.post(`${path}/logout`);
+};
+
+export const getUserInfo = async (cookie?: string): Promise<User> => {
+    return (
+        await axiosInstance.get<GetUserInfoResponse>(path, {
+            headers: { cookie },
+        })
+    )?.data;
+};

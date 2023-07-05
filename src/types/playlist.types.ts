@@ -11,7 +11,7 @@ export interface Playlist {
 export interface UpdatePlaylist {
     _id: string;
     name?: string;
-    tracks?: string[];
+    tracks?: Track[];
 }
 
 export interface PlaylistState {

@@ -3,12 +3,11 @@ import { CreateStepsProps } from '~/components/CreateSteps/CreateSteps.types';
 import { Card, CardContent, Grid, Step, StepLabel, Stepper } from '@mui/material';
 import { STEPS_TEXT } from '~/components/CreateSteps/CreateSteps.constants';
 import { Stack } from '@mui/system';
-import styles from './CreateSteps.module.scss';
 
 export const CreateSteps = ({ currentStep, children }: CreateStepsProps) => {
     return (
         <Stack spacing={3} direction="column" alignItems="center" width="100%">
-            <Stepper className={styles.stepper} activeStep={currentStep}>
+            <Stepper sx={{ width: '100%' }} activeStep={currentStep}>
                 {STEPS_TEXT.map((step, index) => (
                     <Step key={step} completed={currentStep > index}>
                         <StepLabel>{step}</StepLabel>
